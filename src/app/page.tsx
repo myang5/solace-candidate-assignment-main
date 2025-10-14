@@ -6,6 +6,7 @@ import { GetAdvocatesResponseType } from "./api/advocates/route";
 export default function Home() {
   const [advocates, setAdvocates] = useState<GetAdvocatesResponseType>([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState<GetAdvocatesResponseType>([]);
+  const [searchTerm, setSearchTerm] = useState<string>();
 
   useEffect(() => {
     fetch("/api/advocates").then((response) => {
@@ -16,33 +17,20 @@ export default function Home() {
     });
   }, []);
 
-  const onChange = (e) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
 
-    document.getElementById("search-term").innerHTML = searchTerm;
-
-    console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
+    setFilteredAdvocates(filterAdvocates(advocates, searchTerm));
   };
 
   const onClick = () => {
-    console.log(advocates);
     setFilteredAdvocates(advocates);
+    setSearchTerm("");
   };
 
   return (
-    <main style={{ margin: "24px" }}>
+    <main className="m-[24px]">
       <h1>Solace Advocates</h1>
       <br />
       <br />
@@ -51,7 +39,11 @@ export default function Home() {
         <p>
           Searching for: <span id="search-term"></span>
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
+        <input
+          className="border border-solid border-black"
+          value={searchTerm || ""}
+          onChange={onChange}
+        />
         <button onClick={onClick}>Reset Search</button>
       </div>
       <br />
@@ -69,7 +61,7 @@ export default function Home() {
         <tbody>
           {filteredAdvocates.map((advocate) => {
             return (
-              <tr>
+              <tr key={advocate.id}>
                 <td>{advocate.firstName}</td>
                 <td>{advocate.lastName}</td>
                 <td>{advocate.city}</td>
@@ -89,3 +81,17 @@ export default function Home() {
     </main>
   );
 }
+
+const filterAdvocates = (advocates: GetAdvocatesResponseType, searchTerm: string) => {
+  const searchTermLower = searchTerm.toLowerCase();
+  return advocates.filter((advocate) => {
+    return (
+      advocate.firstName.toLowerCase().includes(searchTermLower) ||
+      advocate.lastName.toLowerCase().includes(searchTermLower) ||
+      advocate.city.toLowerCase().includes(searchTermLower) ||
+      advocate.degree.toLowerCase().includes(searchTermLower) ||
+      advocate.specialties.some((specialty) => specialty.toLowerCase().includes(searchTermLower)) ||
+      String(advocate.yearsOfExperience).includes(searchTermLower)
+    );
+  });
+};
