@@ -6,6 +6,7 @@ import { GetAdvocatesResponseType } from "./api/advocates/route";
 export default function Home() {
   const [advocates, setAdvocates] = useState<GetAdvocatesResponseType>([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState<GetAdvocatesResponseType>([]);
+  const [searchTerm, setSearchTerm] = useState<string>();
 
   useEffect(() => {
     fetch("/api/advocates").then((response) => {
@@ -18,8 +19,7 @@ export default function Home() {
 
   const onChange = (e) => {
     const searchTerm = e.target.value;
-
-    document.getElementById("search-term").innerHTML = searchTerm;
+    setSearchTerm(searchTerm);
 
     console.log("filtering advocates...");
     const filteredAdvocates = advocates.filter((advocate) => {
@@ -51,7 +51,7 @@ export default function Home() {
         <p>
           Searching for: <span id="search-term"></span>
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
+        <input style={{ border: "1px solid black" }} value={searchTerm} onChange={onChange} />
         <button onClick={onClick}>Reset Search</button>
       </div>
       <br />
