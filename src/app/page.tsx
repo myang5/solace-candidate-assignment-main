@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { GetAdvocatesResponseType } from "./api/advocates/route";
+import TextInput from "./components/TextInput";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<GetAdvocatesResponseType>([]);
@@ -39,11 +40,7 @@ export default function Home() {
         <p>
           Searching for: <span id="search-term"></span>
         </p>
-        <input
-          className="border border-solid border-black"
-          value={searchTerm || ""}
-          onChange={onChange}
-        />
+        <TextInput value={searchTerm} onChange={onChange} />
         <button onClick={onClick}>Reset Search</button>
       </div>
       <br />
