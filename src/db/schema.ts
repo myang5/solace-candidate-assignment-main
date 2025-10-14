@@ -1,13 +1,5 @@
 import { sql } from "drizzle-orm";
-import {
-  pgTable,
-  integer,
-  text,
-  jsonb,
-  serial,
-  timestamp,
-  bigint,
-} from "drizzle-orm/pg-core";
+import { pgTable, integer, text, jsonb, serial, timestamp, bigint } from "drizzle-orm/pg-core";
 
 const advocates = pgTable("advocates", {
   id: serial("id").primaryKey(),
@@ -15,10 +7,12 @@ const advocates = pgTable("advocates", {
   lastName: text("last_name").notNull(),
   city: text("city").notNull(),
   degree: text("degree").notNull(),
-  specialties: jsonb("payload").default([]).notNull(),
+  specialties: jsonb("payload").$type<string[]>().default([]).notNull(),
   yearsOfExperience: integer("years_of_experience").notNull(),
   phoneNumber: bigint("phone_number", { mode: "number" }).notNull(),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
+
+export type SelectAdvocate = typeof advocates.$inferSelect;
 
 export { advocates };
