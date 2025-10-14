@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { GetAdvocatesResponseType } from "./api/advocates/route";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [advocates, setAdvocates] = useState<GetAdvocatesResponseType>([]);
+  const [filteredAdvocates, setFilteredAdvocates] = useState<GetAdvocatesResponseType>([]);
 
   useEffect(() => {
-    console.log("fetching advocates...");
     fetch("/api/advocates").then((response) => {
       response.json().then((jsonResponse) => {
         setAdvocates(jsonResponse.data);
