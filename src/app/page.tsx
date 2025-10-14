@@ -17,23 +17,11 @@ export default function Home() {
     });
   }, []);
 
-  const onChange = (e) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
 
-    console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
+    setFilteredAdvocates(filterAdvocates(advocates, searchTerm));
   };
 
   const onClick = () => {
@@ -51,7 +39,7 @@ export default function Home() {
         <p>
           Searching for: <span id="search-term"></span>
         </p>
-        <input style={{ border: "1px solid black" }} value={searchTerm} onChange={onChange} />
+        <input style={{ border: "1px solid black" }} value={searchTerm || ""} onChange={onChange} />
         <button onClick={onClick}>Reset Search</button>
       </div>
       <br />
@@ -89,3 +77,17 @@ export default function Home() {
     </main>
   );
 }
+
+const filterAdvocates = (advocates: GetAdvocatesResponseType, searchTerm: string) => {
+  const searchTermLower = searchTerm.toLowerCase();
+  return advocates.filter((advocate) => {
+    return (
+      advocate.firstName.toLowerCase().includes(searchTermLower) ||
+      advocate.lastName.toLowerCase().includes(searchTermLower) ||
+      advocate.city.toLowerCase().includes(searchTermLower) ||
+      advocate.degree.toLowerCase().includes(searchTermLower) ||
+      advocate.specialties.some((specialty) => specialty.toLowerCase().includes(searchTermLower)) ||
+      String(advocate.yearsOfExperience).includes(searchTermLower)
+    );
+  });
+};
