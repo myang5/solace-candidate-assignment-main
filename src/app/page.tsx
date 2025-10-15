@@ -37,7 +37,9 @@ export default function Home() {
   return (
     <main className="bg-white w-screen h-screen flex flex-col">
       <BodyContainer className="border-b border-solid border-gray-300 shadow-md p-[16px] md:p-[20px]">
-        <h1 className="hidden md:block">Find a Solace Advocate</h1>
+        <h1 className="hidden md:block text-title-normal text-green1-800 mb-[16px]">
+          Find a Solace Advocate
+        </h1>
         <TextInput
           value={searchTerm}
           label={"Search for:"}
