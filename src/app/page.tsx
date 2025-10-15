@@ -47,7 +47,9 @@ export default function Home() {
         <TextButton className="mt-[8px]" onClick={onClick}>
           Reset Search
         </TextButton>
-        <p>{pluralize("advocate", filteredAdvocates.length, true)}</p>
+        <p className="mt-[16px] text-subtitle-normal md:text-subtitle-lg-normal">
+          {pluralize("advocate", filteredAdvocates.length, true)}
+        </p>
       </BodyContainer>
       <BodyContainer className="h-full overflow-scroll px-[20px]">
         {!filteredAdvocates.length && <p>Try a different search to see results.</p>}

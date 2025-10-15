@@ -7,6 +7,10 @@ Classes encapsulating CSS properties that should not be overriden by Tailwind ut
 If the properties should be customizable, add them to the @components layer.
 */
 @layer utilities {
+  .text-subtitle-lg-normal {
+    @apply text-[24px] leading-[28px] font-normal;
+  }
+
   .text-subtitle-bold {
     @apply text-[18px] leading-[24px] font-bold;
   }
