@@ -43,7 +43,9 @@ export default function Home() {
 
   const searchAdvocates = (searchTerm?: string) => {
     setSearchTerm(searchTerm || "");
-    // TODO: this causes the
+    // TODO: this causes the UI to flash briefly while
+    // advocates is an empty array - how to only update state
+    // with new data without key conflicts?
     setAdvocates([]);
     fetchAdvocates(searchTerm);
   };
