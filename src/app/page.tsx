@@ -11,19 +11,25 @@ import useRequest from "@ahooksjs/use-request";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState<string>();
-  const { data: advocates, loading: loadingAdvocates } = useRequest<GetAdvocatesResponseType>(
-    "/api/advocates",
-    { loadingDelay: 1000 }
+  const {
+    run: fetchAdvocates,
+    data: advocates,
+    loading: loadingAdvocates,
+  } = useRequest<GetAdvocatesResponseType>(
+    `/api/advocates${
+      searchTerm
+        ? "?" +
+          new URLSearchParams({
+            searchTerm: searchTerm,
+          })
+        : ""
+    }`,
+    { loadingDelay: 1000, debounceInterval: 1000, manual: true }
   );
 
-  // useEffect(() => {
-  //   fetch("/api/advocates").then((response) => {
-  //     response.json().then((jsonResponse) => {
-  //       setAdvocates(jsonResponse.data);
-  //       setFilteredAdvocates(jsonResponse.data);
-  //     });
-  //   });
-  // }, []);
+  useEffect(() => {
+    fetchAdvocates();
+  }, [searchTerm]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
@@ -70,20 +76,6 @@ export default function Home() {
     </main>
   );
 }
-
-const filterAdvocates = (advocates: GetAdvocatesResponseType, searchTerm: string) => {
-  const searchTermLower = searchTerm.toLowerCase();
-  return advocates.filter((advocate) => {
-    return (
-      advocate.firstName.toLowerCase().includes(searchTermLower) ||
-      advocate.lastName.toLowerCase().includes(searchTermLower) ||
-      advocate.city.toLowerCase().includes(searchTermLower) ||
-      advocate.degree.toLowerCase().includes(searchTermLower) ||
-      advocate.specialties.some((specialty) => specialty.toLowerCase().includes(searchTermLower)) ||
-      String(advocate.yearsOfExperience).includes(searchTermLower)
-    );
-  });
-};
 
 const BodyContainer = ({
   className,
