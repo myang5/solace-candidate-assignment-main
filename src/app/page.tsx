@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { GetAdvocatesResponseType } from "./api/advocates/route";
 import TextInput from "./components/TextInput";
+import AdvocateListItem from "./components/AdvocateListItem";
+import pluralize from "pluralize";
+import clsx from "clsx";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<GetAdvocatesResponseType>([]);
@@ -31,50 +34,26 @@ export default function Home() {
   };
 
   return (
-    <main className="m-[24px]">
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
-        </p>
-        <TextInput value={searchTerm} onChange={onChange} />
+    <main className="bg-white w-screen h-screen flex flex-col">
+      <BodyContainer className="border-b border-solid border-gray-300 p-[16px] md:p-[20px]">
+        <h1 className="hidden md:block">Find a Solace Advocate</h1>
+        <TextInput
+          value={searchTerm}
+          label={"Search for:"}
+          wrapperStyles="w-full md:max-w-[400px]"
+          onChange={onChange}
+        />
         <button onClick={onClick}>Reset Search</button>
-      </div>
-      <br />
-      <br />
-      <table>
-        <thead>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>City</th>
-          <th>Degree</th>
-          <th>Specialties</th>
-          <th>Years of Experience</th>
-          <th>Phone Number</th>
-        </thead>
-        <tbody>
+        <p>{pluralize("advocate", filteredAdvocates.length, true)}</p>
+      </BodyContainer>
+      <BodyContainer className="h-full overflow-scroll px-[20px]">
+        {!filteredAdvocates.length && <p>Try a different search to see results.</p>}
+        <div className="flex flex-col divide-y divide-solid divide-gray-300">
           {filteredAdvocates.map((advocate) => {
-            return (
-              <tr key={advocate.id}>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map((s) => (
-                    <div>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
-            );
+            return <AdvocateListItem key={advocate.id} advocate={advocate} />;
           })}
-        </tbody>
-      </table>
+        </div>
+      </BodyContainer>
     </main>
   );
 }
@@ -91,4 +70,18 @@ const filterAdvocates = (advocates: GetAdvocatesResponseType, searchTerm: string
       String(advocate.yearsOfExperience).includes(searchTermLower)
     );
   });
+};
+
+const BodyContainer = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <div className={clsx("flex justify-center", className)}>
+      <div className="w-full md:max-w-[980px]">{children}</div>
+    </div>
+  );
 };
