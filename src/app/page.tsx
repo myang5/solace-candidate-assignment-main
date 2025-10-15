@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { GetAdvocatesResponseType } from "./api/advocates/route";
+import TextInput from "./components/TextInput";
+import AdvocateListItem from "./components/AdvocateListItem";
+import pluralize from "pluralize";
+import clsx from "clsx";
+import TextButton from "./components/TextButton";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<GetAdvocatesResponseType>([]);
@@ -30,54 +35,35 @@ export default function Home() {
   };
 
   return (
-    <main className="m-[24px]">
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
-        </p>
-        <input
-          className="border border-solid border-black"
-          value={searchTerm || ""}
+    <main className="bg-white w-screen h-screen flex flex-col">
+      <BodyContainer className="bg-green1-800 shadow-md shadow-green1-500 p-[16px] md:p-[20px]">
+        <h1 className="hidden md:block text-title-normal text-white mb-[16px]">
+          Find a Solace Advocate
+        </h1>
+        <TextInput
+          type={TextInput.type.light}
+          value={searchTerm}
+          label={"Search for:"}
+          wrapperStyles="w-full md:max-w-[400px]"
           onChange={onChange}
         />
-        <button onClick={onClick}>Reset Search</button>
-      </div>
-      <br />
-      <br />
-      <table>
-        <thead>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>City</th>
-          <th>Degree</th>
-          <th>Specialties</th>
-          <th>Years of Experience</th>
-          <th>Phone Number</th>
-        </thead>
-        <tbody>
+        <TextButton type={TextButton.type.light} className="mt-[8px]" onClick={onClick}>
+          Reset Search
+        </TextButton>
+        <p className="mt-[16px] text-white text-subtitle-normal md:text-subtitle-lg-normal">
+          {pluralize("advocate", filteredAdvocates.length, true)}
+        </p>
+      </BodyContainer>
+      <BodyContainer className="h-full overflow-scroll pt-[24px] pb-[16px] px-[16px] md:pb-[20px] md:px-[20px]">
+        {!filteredAdvocates.length && (
+          <p className="text-subtitle-normal">Try a different search to see more results.</p>
+        )}
+        <div className="flex flex-col gap-y-[20px] pb-[20px]">
           {filteredAdvocates.map((advocate) => {
-            return (
-              <tr key={advocate.id}>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map((s) => (
-                    <div>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
-            );
+            return <AdvocateListItem key={advocate.id} advocate={advocate} />;
           })}
-        </tbody>
-      </table>
+        </div>
+      </BodyContainer>
     </main>
   );
 }
@@ -94,4 +80,18 @@ const filterAdvocates = (advocates: GetAdvocatesResponseType, searchTerm: string
       String(advocate.yearsOfExperience).includes(searchTermLower)
     );
   });
+};
+
+const BodyContainer = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <div className={clsx("flex justify-center w-full", className)}>
+      <div className="w-full md:max-w-[980px]">{children}</div>
+    </div>
+  );
 };

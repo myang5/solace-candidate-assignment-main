@@ -9,7 +9,7 @@ const advocates = pgTable("advocates", {
   degree: text("degree").notNull(),
   specialties: jsonb("payload").$type<string[]>().default([]).notNull(),
   yearsOfExperience: integer("years_of_experience").notNull(),
-  phoneNumber: bigint("phone_number", { mode: "number" }).notNull(),
+  phoneNumber: text("phone_number").notNull(),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 

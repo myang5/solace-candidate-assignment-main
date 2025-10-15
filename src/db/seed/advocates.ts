@@ -42,7 +42,7 @@ const advocateData = [
     degree: "MD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 10,
-    phoneNumber: 5551234567,
+    phoneNumber: "5551234567",
   },
   {
     firstName: "Jane",
@@ -51,7 +51,7 @@ const advocateData = [
     degree: "PhD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 8,
-    phoneNumber: 5559876543,
+    phoneNumber: "5559876543",
   },
   {
     firstName: "Alice",
@@ -60,7 +60,7 @@ const advocateData = [
     degree: "MSW",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 5,
-    phoneNumber: 5554567890,
+    phoneNumber: "5554567890",
   },
   {
     firstName: "Michael",
@@ -69,7 +69,7 @@ const advocateData = [
     degree: "MD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 12,
-    phoneNumber: 5556543210,
+    phoneNumber: "5556543210",
   },
   {
     firstName: "Emily",
@@ -78,7 +78,7 @@ const advocateData = [
     degree: "PhD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 7,
-    phoneNumber: 5553210987,
+    phoneNumber: "5553210987",
   },
   {
     firstName: "Chris",
@@ -87,7 +87,7 @@ const advocateData = [
     degree: "MSW",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 9,
-    phoneNumber: 5557890123,
+    phoneNumber: "5557890123",
   },
   {
     firstName: "Jessica",
@@ -96,7 +96,7 @@ const advocateData = [
     degree: "MD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 11,
-    phoneNumber: 5554561234,
+    phoneNumber: "5554561234",
   },
   {
     firstName: "David",
@@ -105,7 +105,7 @@ const advocateData = [
     degree: "PhD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 6,
-    phoneNumber: 5557896543,
+    phoneNumber: "5557896543",
   },
   {
     firstName: "Laura",
@@ -114,7 +114,7 @@ const advocateData = [
     degree: "MSW",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 4,
-    phoneNumber: 5550123456,
+    phoneNumber: "5550123456",
   },
   {
     firstName: "Daniel",
@@ -123,7 +123,7 @@ const advocateData = [
     degree: "MD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 13,
-    phoneNumber: 5553217654,
+    phoneNumber: "5553217654",
   },
   {
     firstName: "Sarah",
@@ -132,7 +132,7 @@ const advocateData = [
     degree: "PhD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 10,
-    phoneNumber: 5551238765,
+    phoneNumber: "5551238765",
   },
   {
     firstName: "James",
@@ -141,7 +141,7 @@ const advocateData = [
     degree: "MSW",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 5,
-    phoneNumber: 5556540987,
+    phoneNumber: "5556540987",
   },
   {
     firstName: "Megan",
@@ -150,7 +150,7 @@ const advocateData = [
     degree: "MD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 14,
-    phoneNumber: 5559873456,
+    phoneNumber: "5559873456",
   },
   {
     firstName: "Joshua",
@@ -159,7 +159,7 @@ const advocateData = [
     degree: "PhD",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 9,
-    phoneNumber: 5556781234,
+    phoneNumber: "5556781234",
   },
   {
     firstName: "Amanda",
@@ -168,7 +168,7 @@ const advocateData = [
     degree: "MSW",
     specialties: specialties.slice(...randomSpecialty()),
     yearsOfExperience: 3,
-    phoneNumber: 5559872345,
+    phoneNumber: "5559872345",
   },
 ];
 

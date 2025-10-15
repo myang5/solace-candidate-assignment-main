@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .text-title-normal {
+    @apply text-[36px] leading-[40px] font-normal;
+  }
+
+  .text-subtitle-lg-normal {
+    @apply text-[24px] leading-[28px] font-normal;
+  }
+
+  .text-subtitle-bold {
+    @apply text-[18px] leading-[24px] font-bold;
+  }
+
+  .text-body-bold {
+    @apply text-[16px] leading-[1.5] font-bold;
+  }
+
+  .text-body-normal {
+    @apply text-[16px] leading-[1.5] font-normal;
+  }
+
+  .text-body-light {
+    @apply text-[16px] leading-[1.5] font-light;
+  }
+
+  .text-caption-normal {
+    @apply text-[14px] leading-[16px] font-normal;
+  }
+
+  /* 
+  CSS class needed to alter color of SVGs loaded by <img> elements
+  Can use site like this to convert a hex code to a CSS filter:
+  https://angel-rs.github.io/css-color-filter-generator/
+  */
+  .filter-gray-500 {
+    filter: brightness(0) saturate(100%) invert(45%) sepia(10%) saturate(611%) hue-rotate(182deg)
+      brightness(94%) contrast(79%);
+  }
+}
