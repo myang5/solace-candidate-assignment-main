@@ -6,6 +6,7 @@ import TextInput from "./components/TextInput";
 import AdvocateListItem from "./components/AdvocateListItem";
 import pluralize from "pluralize";
 import clsx from "clsx";
+import TextButton from "./components/TextButton";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<GetAdvocatesResponseType>([]);
@@ -43,7 +44,9 @@ export default function Home() {
           wrapperStyles="w-full md:max-w-[400px]"
           onChange={onChange}
         />
-        <button onClick={onClick}>Reset Search</button>
+        <TextButton className="mt-[8px]" onClick={onClick}>
+          Reset Search
+        </TextButton>
         <p>{pluralize("advocate", filteredAdvocates.length, true)}</p>
       </BodyContainer>
       <BodyContainer className="h-full overflow-scroll px-[20px]">

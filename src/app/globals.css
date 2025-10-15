@@ -7,11 +7,15 @@ Classes encapsulating CSS properties that should not be overriden by Tailwind ut
 If the properties should be customizable, add them to the @components layer.
 */
 @layer utilities {
-  .text-input-label {
+  .text-subtitle-bold {
     @apply text-[18px] leading-[24px] font-bold;
   }
 
-  .text-input {
+  .text-body-bold {
+    @apply text-[16px] leading-[1.5] font-bold;
+  }
+
+  .text-body-normal {
     @apply text-[16px] leading-[1.5] font-normal;
   }
 }
