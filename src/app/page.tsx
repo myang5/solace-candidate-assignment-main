@@ -36,25 +36,28 @@ export default function Home() {
 
   return (
     <main className="bg-white w-screen h-screen flex flex-col">
-      <BodyContainer className="border-b border-solid border-gray-300 shadow-md p-[16px] md:p-[20px]">
-        <h1 className="hidden md:block text-title-normal text-green1-800 mb-[16px]">
+      <BodyContainer className="bg-green1-800 shadow-md shadow-green1-500 p-[16px] md:p-[20px]">
+        <h1 className="hidden md:block text-title-normal text-white mb-[16px]">
           Find a Solace Advocate
         </h1>
         <TextInput
+          type={TextInput.type.light}
           value={searchTerm}
           label={"Search for:"}
           wrapperStyles="w-full md:max-w-[400px]"
           onChange={onChange}
         />
-        <TextButton className="mt-[8px]" onClick={onClick}>
+        <TextButton type={TextButton.type.light} className="mt-[8px]" onClick={onClick}>
           Reset Search
         </TextButton>
-        <p className="mt-[16px] text-subtitle-normal md:text-subtitle-lg-normal">
+        <p className="mt-[16px] text-white text-subtitle-normal md:text-subtitle-lg-normal">
           {pluralize("advocate", filteredAdvocates.length, true)}
         </p>
       </BodyContainer>
       <BodyContainer className="h-full overflow-scroll pt-[24px] pb-[16px] px-[16px] md:pb-[20px] md:px-[20px]">
-        {!filteredAdvocates.length && <p>Try a different search to see results.</p>}
+        {!filteredAdvocates.length && (
+          <p className="text-subtitle-normal">Try a different search to see more results.</p>
+        )}
         <div className="flex flex-col gap-y-[20px] pb-[20px]">
           {filteredAdvocates.map((advocate) => {
             return <AdvocateListItem key={advocate.id} advocate={advocate} />;
@@ -87,7 +90,7 @@ const BodyContainer = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className={clsx("flex justify-center", className)}>
+    <div className={clsx("flex justify-center w-full", className)}>
       <div className="w-full md:max-w-[980px]">{children}</div>
     </div>
   );
