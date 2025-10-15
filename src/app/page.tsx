@@ -7,30 +7,30 @@ import AdvocateListItem from "./components/AdvocateListItem";
 import pluralize from "pluralize";
 import clsx from "clsx";
 import TextButton from "./components/TextButton";
+import useRequest from "@ahooksjs/use-request";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState<GetAdvocatesResponseType>([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState<GetAdvocatesResponseType>([]);
   const [searchTerm, setSearchTerm] = useState<string>();
+  const { data: advocates, loading: loadingAdvocates } = useRequest<GetAdvocatesResponseType>(
+    "/api/advocates",
+    { loadingDelay: 1000 }
+  );
 
-  useEffect(() => {
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-      });
-    });
-  }, []);
+  // useEffect(() => {
+  //   fetch("/api/advocates").then((response) => {
+  //     response.json().then((jsonResponse) => {
+  //       setAdvocates(jsonResponse.data);
+  //       setFilteredAdvocates(jsonResponse.data);
+  //     });
+  //   });
+  // }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
-
-    setFilteredAdvocates(filterAdvocates(advocates, searchTerm));
   };
 
   const onClick = () => {
-    setFilteredAdvocates(advocates);
     setSearchTerm("");
   };
 
@@ -51,18 +51,21 @@ export default function Home() {
           Reset Search
         </TextButton>
         <p className="mt-[16px] text-white text-subtitle-normal md:text-subtitle-lg-normal">
-          {pluralize("advocate", filteredAdvocates.length, true)}
+          {pluralize("advocate", advocates?.length || 0, true)}
         </p>
       </BodyContainer>
       <BodyContainer className="h-full overflow-scroll pt-[24px] pb-[16px] px-[16px] md:pb-[20px] md:px-[20px]">
-        {!filteredAdvocates.length && (
+        {loadingAdvocates || !advocates ? (
+          <p className="text-subtitle-normal">Searching advocates...</p>
+        ) : !advocates.length ? (
           <p className="text-subtitle-normal">Try a different search to see more results.</p>
+        ) : (
+          <div className="flex flex-col gap-y-[20px] pb-[20px]">
+            {advocates.map((advocate) => {
+              return <AdvocateListItem key={advocate.id} advocate={advocate} />;
+            })}
+          </div>
         )}
-        <div className="flex flex-col gap-y-[20px] pb-[20px]">
-          {filteredAdvocates.map((advocate) => {
-            return <AdvocateListItem key={advocate.id} advocate={advocate} />;
-          })}
-        </div>
       </BodyContainer>
     </main>
   );
