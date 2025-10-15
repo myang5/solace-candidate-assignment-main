@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 
+Classes encapsulating CSS properties that should not be overriden by Tailwind utilities.
+If the properties should be customizable, add them to the @components layer.
+*/
+@layer utilities {
+  .text-input-label {
+    @apply text-[18px] leading-[24px] font-bold;
+  }
+
+  .text-input {
+    @apply text-[16px] leading-[1.5] font-normal;
+  }
+}
