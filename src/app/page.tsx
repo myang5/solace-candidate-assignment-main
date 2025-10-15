@@ -8,9 +8,13 @@ import pluralize from "pluralize";
 import clsx from "clsx";
 import TextButton from "./components/TextButton";
 import useRequest from "@ahooksjs/use-request";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { SelectAdvocate } from "@/db/schema";
+import "./app.css";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [advocates, setAdvocates] = useState<SelectAdvocate[]>();
   const {
     run: fetchAdvocates,
     data,
@@ -22,9 +26,16 @@ export default function Home() {
         pageSize: String(5),
         next: next || "",
       })}`,
-    { loadingDelay: 1000, debounceInterval: 100, manual: true }
+    {
+      loadingDelay: 1000,
+      debounceInterval: 100,
+      manual: true,
+      onSuccess: (response) => {
+        setAdvocates((advocates) => (advocates || []).concat(response.data));
+      },
+    }
   );
-  const { data: advocates, count: totalAdvocates, next } = data || {};
+  const { count: totalAdvocates, next } = data || {};
 
   useEffect(() => {
     fetchAdvocates();
@@ -32,6 +43,8 @@ export default function Home() {
 
   const searchAdvocates = (searchTerm?: string) => {
     setSearchTerm(searchTerm || "");
+    // TODO: this causes the
+    setAdvocates([]);
     fetchAdvocates(searchTerm);
   };
 
@@ -46,51 +59,76 @@ export default function Home() {
 
   return (
     <main className="bg-white w-screen h-screen flex flex-col">
-      <BodyContainer className="bg-green1-800 shadow-md shadow-green1-500 p-[16px] md:p-[20px]">
-        <h1 className="hidden md:block text-title-normal text-white mb-[16px]">
-          Find a Solace Advocate
-        </h1>
-        <TextInput
-          type={TextInput.type.light}
-          value={searchTerm}
-          label={"Search for:"}
-          wrapperStyles="w-full md:max-w-[400px]"
-          onChange={onChange}
-        />
-        <TextButton type={TextButton.type.light} className="mt-[8px]" onClick={onReset}>
-          Reset Search
-        </TextButton>
-        <p className="mt-[16px] text-white text-subtitle-normal md:text-subtitle-lg-normal">
-          {pluralize("advocate", totalAdvocates || 0, true)}
-        </p>
-      </BodyContainer>
-      <BodyContainer className="h-full overflow-scroll pt-[24px] pb-[16px] px-[16px] md:pb-[20px] md:px-[20px]">
+      <BodyContainerOuter className="flex-none bg-green1-800 shadow-md shadow-green1-500 p-[16px] md:p-[20px]">
+        <div className={bodyContainerInnerCls}>
+          <h1 className="hidden md:block text-title-normal text-white mb-[16px]">
+            Find a Solace Advocate
+          </h1>
+          <TextInput
+            type={TextInput.type.light}
+            value={searchTerm}
+            label={"Search for:"}
+            wrapperStyles="w-full md:max-w-[400px]"
+            onChange={onChange}
+          />
+          <TextButton type={TextButton.type.light} className="mt-[8px]" onClick={onReset}>
+            Reset Search
+          </TextButton>
+          <p className="mt-[16px] text-white text-subtitle-normal md:text-subtitle-lg-normal">
+            {pluralize("advocate", totalAdvocates || 0, true)}
+          </p>
+        </div>
+      </BodyContainerOuter>
+      <BodyContainerOuter
+        id="scrollableDiv"
+        className={clsx(
+          "advocates-list",
+          "flex-auto overflow-auto pt-[24px] pb-[16px] px-[16px] md:pb-[20px] md:px-[20px]"
+        )}
+      >
         {loadingAdvocates || !advocates ? (
-          <p className="text-subtitle-normal">Searching advocates...</p>
+          <p className={clsx(bodyContainerInnerCls, "text-subtitle-normal")}>
+            Searching advocates...
+          </p>
         ) : !totalAdvocates ? (
-          <p className="text-subtitle-normal">Try a different search to see more results.</p>
+          <p className={clsx(bodyContainerInnerCls, "text-subtitle-normal")}>
+            Try a different search to see more results.
+          </p>
         ) : (
-          <div className="flex flex-col gap-y-[20px] pb-[20px]">
+          <InfiniteScroll
+            dataLength={advocates.length}
+            hasMore={!!next}
+            next={() => {
+              fetchAdvocates(searchTerm, next);
+            }}
+            loader={null}
+            scrollableTarget="scrollableDiv"
+            className={clsx(bodyContainerInnerCls, "flex flex-col gap-y-[20px] pb-[20px]")}
+          >
             {advocates.map((advocate) => {
               return <AdvocateListItem key={advocate.id} advocate={advocate} />;
             })}
-          </div>
+          </InfiniteScroll>
         )}
-      </BodyContainer>
+      </BodyContainerOuter>
     </main>
   );
 }
 
-const BodyContainer = ({
+const BodyContainerOuter = ({
   className,
+  id,
   children,
 }: {
   className?: string;
+  id?: string;
   children: React.ReactNode;
 }) => {
   return (
-    <div className={clsx("flex justify-center w-full", className)}>
-      <div className="w-full md:max-w-[980px]">{children}</div>
+    <div id={id} className={clsx("flex justify-center w-full", className)}>
+      {children}
     </div>
   );
 };
+
+const bodyContainerInnerCls = "w-full md:max-w-[980px]";
