@@ -23,6 +23,10 @@ If the properties should be customizable, add them to the @components layer.
     @apply text-[16px] leading-[1.5] font-normal;
   }
 
+  .text-body-light {
+    @apply text-[16px] leading-[1.5] font-light;
+  }
+
   .text-caption-normal {
     @apply text-[14px] leading-[16px] font-normal;
   }

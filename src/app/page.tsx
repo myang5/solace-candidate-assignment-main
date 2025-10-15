@@ -36,7 +36,7 @@ export default function Home() {
 
   return (
     <main className="bg-white w-screen h-screen flex flex-col">
-      <BodyContainer className="border-b border-solid border-gray-300 p-[16px] md:p-[20px]">
+      <BodyContainer className="border-b border-solid border-gray-300 shadow-md p-[16px] md:p-[20px]">
         <h1 className="hidden md:block">Find a Solace Advocate</h1>
         <TextInput
           value={searchTerm}
@@ -51,9 +51,9 @@ export default function Home() {
           {pluralize("advocate", filteredAdvocates.length, true)}
         </p>
       </BodyContainer>
-      <BodyContainer className="h-full overflow-scroll px-[20px]">
+      <BodyContainer className="h-full overflow-scroll pt-[24px] pb-[16px] px-[16px] md:pb-[20px] md:px-[20px]">
         {!filteredAdvocates.length && <p>Try a different search to see results.</p>}
-        <div className="flex flex-col divide-y divide-solid divide-gray-300">
+        <div className="flex flex-col gap-y-[20px] pb-[20px]">
           {filteredAdvocates.map((advocate) => {
             return <AdvocateListItem key={advocate.id} advocate={advocate} />;
           })}

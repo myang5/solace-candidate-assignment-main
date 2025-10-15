@@ -2,10 +2,17 @@ import { SelectAdvocate } from "@/db/schema";
 import Image from "next/image";
 import React from "react";
 import pluralize from "pluralize";
+import clsx from "clsx";
 
 export default function AdvocateListItem({ advocate }: { advocate: SelectAdvocate }) {
   return (
-    <div className="py-[20px] flex flex-col md:flex-row md:gap-x-[20px]">
+    <div
+      className={clsx(
+        "flex flex-col md:flex-row",
+        "border border-solid border-green1-500 rounded-3xl",
+        "p-[16px] md:p-[20px] md:gap-x-[20px]"
+      )}
+    >
       <div className="w-full md:w-[280px] flex flex-col">
         <p className="text-subtitle-lg-normal text-green1-700 mb-[8px]">
           {advocate.firstName} {advocate.lastName}, {advocate.degree}
@@ -15,13 +22,13 @@ export default function AdvocateListItem({ advocate }: { advocate: SelectAdvocat
         </MetadataItem>
         <MetadataItem iconSrc="/location-icon.svg">{advocate.city}</MetadataItem>
         <MetadataItem iconSrc="/star-icon.svg">
-          {pluralize("year", 1, true)} of experience
+          {pluralize("year", advocate.yearsOfExperience, true)} of experience
         </MetadataItem>
       </div>
       <div className="w-full">
-        <p>Specialties:</p>
-        <div>
-          {advocate.specialties.map((s) => (
+        <p className="text-body-bold mt-[8px] mb-[6px] md:mt-[0px]">Specialties</p>
+        <div className="text-body-light text-gray-800 flex flex-col gap-y-[2px]">
+          {advocate.specialties.sort().map((s) => (
             <p key={s}>{s}</p>
           ))}
         </div>
