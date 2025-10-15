@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 
-Classes encapsulating CSS properties that should not be overriden by Tailwind utilities.
-If the properties should be customizable, add them to the @components layer.
-*/
 @layer utilities {
   .text-title-normal {
     @apply text-[36px] leading-[40px] font-normal;
