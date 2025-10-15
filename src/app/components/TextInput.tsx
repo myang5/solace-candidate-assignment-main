@@ -21,9 +21,9 @@ export default function TextInput({ value, label, wrapperStyles, onChange }: Pro
           "w-full py-[12px] px-[14px]",
           "text-input text-black",
           "transition-all duration-200",
-          "hover:border-[#3f6b5e]",
-          "focus:border-[#285e50] focus:shadow-[0_0_0_2px_rgba(3,24,15,0.42)] focus:outline-none",
-          "focus-visible:border-[#285e50] focus-visible:shadow-[0_0_0_2px_rgba(3,24,15,0.42)] focus-visible:outline-none"
+          "hover:border-green1-700",
+          "focus:border-green1-800 focus:shadow-[0_0_0_2px_rgba(3,24,15,0.42)] focus:outline-none",
+          "focus-visible:border-green1-800 focus-visible:shadow-[0_0_0_2px_rgba(3,24,15,0.42)] focus-visible:outline-none"
         )}
       />
     </Field>
