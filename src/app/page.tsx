@@ -10,34 +10,38 @@ import TextButton from "./components/TextButton";
 import useRequest from "@ahooksjs/use-request";
 
 export default function Home() {
-  const [searchTerm, setSearchTerm] = useState<string>();
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const {
     run: fetchAdvocates,
-    data: advocates,
+    data,
     loading: loadingAdvocates,
   } = useRequest<GetAdvocatesResponseType>(
-    `/api/advocates${
-      searchTerm
-        ? "?" +
-          new URLSearchParams({
-            searchTerm: searchTerm,
-          })
-        : ""
-    }`,
-    { loadingDelay: 1000, debounceInterval: 1000, manual: true }
+    (searchTerm, next) =>
+      `/api/advocates?${new URLSearchParams({
+        searchTerm: searchTerm || "",
+        pageSize: String(5),
+        next: next || "",
+      })}`,
+    { loadingDelay: 1000, debounceInterval: 100, manual: true }
   );
+  const { data: advocates, count: totalAdvocates, next } = data || {};
 
   useEffect(() => {
     fetchAdvocates();
-  }, [searchTerm]);
+  }, []);
+
+  const searchAdvocates = (searchTerm?: string) => {
+    setSearchTerm(searchTerm || "");
+    fetchAdvocates(searchTerm);
+  };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
-    setSearchTerm(searchTerm);
+    searchAdvocates(searchTerm);
   };
 
-  const onClick = () => {
-    setSearchTerm("");
+  const onReset = () => {
+    searchAdvocates("");
   };
 
   return (
@@ -53,17 +57,17 @@ export default function Home() {
           wrapperStyles="w-full md:max-w-[400px]"
           onChange={onChange}
         />
-        <TextButton type={TextButton.type.light} className="mt-[8px]" onClick={onClick}>
+        <TextButton type={TextButton.type.light} className="mt-[8px]" onClick={onReset}>
           Reset Search
         </TextButton>
         <p className="mt-[16px] text-white text-subtitle-normal md:text-subtitle-lg-normal">
-          {pluralize("advocate", advocates?.length || 0, true)}
+          {pluralize("advocate", totalAdvocates || 0, true)}
         </p>
       </BodyContainer>
       <BodyContainer className="h-full overflow-scroll pt-[24px] pb-[16px] px-[16px] md:pb-[20px] md:px-[20px]">
         {loadingAdvocates || !advocates ? (
           <p className="text-subtitle-normal">Searching advocates...</p>
-        ) : !advocates.length ? (
+        ) : !totalAdvocates ? (
           <p className="text-subtitle-normal">Try a different search to see more results.</p>
         ) : (
           <div className="flex flex-col gap-y-[20px] pb-[20px]">
