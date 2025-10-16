@@ -48,8 +48,6 @@ export async function GET(request: NextRequest) {
   const data = await dataQuery.execute();
   const next = data.length > pageSize ? data[pageSize].id : null;
 
-  console.log({ length: data.length, next });
-
   return Response.json({ count: rowCount, next, data: data.slice(0, pageSize) });
 }
 
