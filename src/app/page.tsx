@@ -30,8 +30,15 @@ export default function Home() {
       loadingDelay: 1000,
       debounceInterval: 100,
       manual: true,
-      onSuccess: (response) => {
-        setAdvocates((advocates) => (advocates || []).concat(response.data));
+      onSuccess: (response, [_, next]) => {
+        // If next is defined, we requested the next page of results
+        // to append our current list of results.
+        // If next is not defined, we're initiating a new search.
+        // This approach prevents UI flickering from resetting
+        // the list of results between searches.
+        setAdvocates((advocates) =>
+          next ? (advocates || []).concat(response.data) : response.data
+        );
       },
     }
   );
@@ -43,10 +50,6 @@ export default function Home() {
 
   const searchAdvocates = (searchTerm?: string) => {
     setSearchTerm(searchTerm || "");
-    // TODO: this causes the UI to flash briefly while
-    // advocates is an empty array - how to only update state
-    // with new data without key conflicts?
-    setAdvocates([]);
     fetchAdvocates(searchTerm);
   };
 
