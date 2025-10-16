@@ -23,7 +23,7 @@ export default function Home() {
     (searchTerm, next) =>
       `/api/advocates?${new URLSearchParams({
         searchTerm: searchTerm || "",
-        pageSize: String(5),
+        pageSize: String(20),
         next: next || "",
       })}`,
     {
