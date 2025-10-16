@@ -7,91 +7,133 @@ import AdvocateListItem from "./components/AdvocateListItem";
 import pluralize from "pluralize";
 import clsx from "clsx";
 import TextButton from "./components/TextButton";
+import useRequest from "@ahooksjs/use-request";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { SelectAdvocate } from "@/db/schema";
+import "./app.css";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState<GetAdvocatesResponseType>([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState<GetAdvocatesResponseType>([]);
-  const [searchTerm, setSearchTerm] = useState<string>();
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [advocates, setAdvocates] = useState<SelectAdvocate[]>();
+  const {
+    run: fetchAdvocates,
+    data,
+    loading: loadingAdvocates,
+  } = useRequest<GetAdvocatesResponseType>(
+    (searchTerm, next) =>
+      `/api/advocates?${new URLSearchParams({
+        searchTerm: searchTerm || "",
+        pageSize: String(5),
+        next: next || "",
+      })}`,
+    {
+      loadingDelay: 1000,
+      debounceInterval: 100,
+      manual: true,
+      onSuccess: (response, [_, next]) => {
+        // If next is defined, we requested the next page of results
+        // to append our current list of results.
+        // If next is not defined, we're initiating a new search.
+        // This approach prevents UI flickering from resetting
+        // the list of results between searches.
+        setAdvocates((advocates) =>
+          next ? (advocates || []).concat(response.data) : response.data
+        );
+      },
+    }
+  );
+  const { count: totalAdvocates, next } = data || {};
 
   useEffect(() => {
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-      });
-    });
+    fetchAdvocates();
   }, []);
+
+  const searchAdvocates = (searchTerm?: string) => {
+    setSearchTerm(searchTerm || "");
+    fetchAdvocates(searchTerm);
+  };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
-    setSearchTerm(searchTerm);
-
-    setFilteredAdvocates(filterAdvocates(advocates, searchTerm));
+    searchAdvocates(searchTerm);
   };
 
-  const onClick = () => {
-    setFilteredAdvocates(advocates);
-    setSearchTerm("");
+  const onReset = () => {
+    searchAdvocates("");
   };
 
   return (
     <main className="bg-white w-screen h-screen flex flex-col">
-      <BodyContainer className="bg-green1-800 shadow-md shadow-green1-500 p-[16px] md:p-[20px]">
-        <h1 className="hidden md:block text-title-normal text-white mb-[16px]">
-          Find a Solace Advocate
-        </h1>
-        <TextInput
-          type={TextInput.type.light}
-          value={searchTerm}
-          label={"Search for:"}
-          wrapperStyles="w-full md:max-w-[400px]"
-          onChange={onChange}
-        />
-        <TextButton type={TextButton.type.light} className="mt-[8px]" onClick={onClick}>
-          Reset Search
-        </TextButton>
-        <p className="mt-[16px] text-white text-subtitle-normal md:text-subtitle-lg-normal">
-          {pluralize("advocate", filteredAdvocates.length, true)}
-        </p>
-      </BodyContainer>
-      <BodyContainer className="h-full overflow-scroll pt-[24px] pb-[16px] px-[16px] md:pb-[20px] md:px-[20px]">
-        {!filteredAdvocates.length && (
-          <p className="text-subtitle-normal">Try a different search to see more results.</p>
-        )}
-        <div className="flex flex-col gap-y-[20px] pb-[20px]">
-          {filteredAdvocates.map((advocate) => {
-            return <AdvocateListItem key={advocate.id} advocate={advocate} />;
-          })}
+      <BodyContainerOuter className="flex-none bg-green1-800 shadow-md shadow-green1-500 p-[16px] md:p-[20px]">
+        <div className={bodyContainerInnerCls}>
+          <h1 className="hidden md:block text-title-normal text-white mb-[16px]">
+            Find a Solace Advocate
+          </h1>
+          <TextInput
+            type={TextInput.type.light}
+            value={searchTerm}
+            label={"Search for:"}
+            wrapperStyles="w-full md:max-w-[400px]"
+            onChange={onChange}
+          />
+          <TextButton type={TextButton.type.light} className="mt-[8px]" onClick={onReset}>
+            Reset Search
+          </TextButton>
+          <p className="mt-[16px] text-white text-subtitle-normal md:text-subtitle-lg-normal">
+            {pluralize("advocate", totalAdvocates || 0, true)}
+          </p>
         </div>
-      </BodyContainer>
+      </BodyContainerOuter>
+      <BodyContainerOuter
+        id="scrollableDiv"
+        className={clsx(
+          "advocates-list",
+          "flex-auto overflow-auto pt-[24px] pb-[16px] px-[16px] md:pb-[20px] md:px-[20px]"
+        )}
+      >
+        {loadingAdvocates || !advocates ? (
+          <p className={clsx(bodyContainerInnerCls, "text-subtitle-normal")}>
+            Searching advocates...
+          </p>
+        ) : !totalAdvocates ? (
+          <p className={clsx(bodyContainerInnerCls, "text-subtitle-normal")}>
+            Try a different search to see more results.
+          </p>
+        ) : (
+          <InfiniteScroll
+            dataLength={advocates.length}
+            hasMore={!!next}
+            next={() => {
+              fetchAdvocates(searchTerm, next);
+            }}
+            loader={null}
+            scrollableTarget="scrollableDiv"
+            className={clsx(bodyContainerInnerCls, "flex flex-col gap-y-[20px] pb-[20px]")}
+          >
+            {advocates.map((advocate) => {
+              return <AdvocateListItem key={advocate.id} advocate={advocate} />;
+            })}
+          </InfiniteScroll>
+        )}
+      </BodyContainerOuter>
     </main>
   );
 }
 
-const filterAdvocates = (advocates: GetAdvocatesResponseType, searchTerm: string) => {
-  const searchTermLower = searchTerm.toLowerCase();
-  return advocates.filter((advocate) => {
-    return (
-      advocate.firstName.toLowerCase().includes(searchTermLower) ||
-      advocate.lastName.toLowerCase().includes(searchTermLower) ||
-      advocate.city.toLowerCase().includes(searchTermLower) ||
-      advocate.degree.toLowerCase().includes(searchTermLower) ||
-      advocate.specialties.some((specialty) => specialty.toLowerCase().includes(searchTermLower)) ||
-      String(advocate.yearsOfExperience).includes(searchTermLower)
-    );
-  });
-};
-
-const BodyContainer = ({
+const BodyContainerOuter = ({
   className,
+  id,
   children,
 }: {
   className?: string;
+  id?: string;
   children: React.ReactNode;
 }) => {
   return (
-    <div className={clsx("flex justify-center w-full", className)}>
-      <div className="w-full md:max-w-[980px]">{children}</div>
+    <div id={id} className={clsx("flex justify-center w-full", className)}>
+      {children}
     </div>
   );
 };
+
+const bodyContainerInnerCls = "w-full md:max-w-[980px]";

@@ -1,0 +1,10 @@
+/* 
+Unfortunately no way to use Tailwind to style outer div
+of InfiniteScroll component, need to use raw CSS
+*/
+.advocates-list {
+  .infinite-scroll-component__outerdiv {
+    width: 100%;
+    max-width: 980px;
+  }
+}
